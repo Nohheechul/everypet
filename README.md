@@ -219,8 +219,3 @@
 
 </div>
 </details>
-
-
-## 📖 ERD 다이어그램
-
-![EveryPet](https://github.com/user-attachments/assets/03bb1e70-ae8e-4a3e-a37a-b64465dc505b)
