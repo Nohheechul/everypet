@@ -38,130 +38,8 @@
     - **브랜드 별 조회:** 특정 브랜드에 속한 상품을 조회합니다.
     - **키워드 검색:** 사용자가 입력한 키워드에 해당하는 상품을 조회합니다.
     - **단일 상품 조회:** 특정 상품 ID에 해당하는 상품을 조회합니다.
-
-## 검색 기능
-- **상품 검색**
-
-## 주문 기능
-- **주문 생성/주문 삭제/주문 조회 및 상세 조회/운송장 번호 추가**
-
-## 결제 기능
-- **결제 상태 조회/결제 검증 및 주문 상태 업데이트/결제 정보 저장**
-
-## 광고 기능
-- **광고 생성/광고 삭제/광고 수정/광고 조회**
-
-# 기능 자세히 보기
-
 <details>
-<summary>주문 기능</summary>
-<div markdown="1">
-
-### 1. 주문 생성
-**기능 설명:** 사용자가 주문을 생성할 수 있는 기능을 제공합니다. 주문 정보는 `InsertOrderDTO`를 통해 전달되며, 주문 상세 정보는 `OrderDetailMapper`를 통해 저장됩니다.
-
-**기술적 설명:**
-- `OrderServiceImpl`의 `insertOrder` 메서드는 `InsertOrderDTO`를 받아 주문 정보를 처리합니다. 주문 상품의 가격을 조회하고 총 금액을 계산합니다.
-- `OrderMapper`의 `insertOrder` 메서드를 통해 주문 정보를 데이터베이스에 저장합니다.
-- `OrderDetailMapper`의 `insertOrderDetail` 메서드를 통해 주문 상세 정보를 저장합니다.
-
-### 2. 주문 삭제
-**기능 설명:** 특정 주문 ID에 해당하는 주문을 삭제할 수 있는 기능을 제공합니다.
-
-**기술적 설명:**
-- `OrderServiceImpl`의 `deleteOrder` 메서드는 주어진 `orderId`를 통해 주문 정보를 삭제합니다.
-- 먼저 `OrderDetailMapper`의 `deleteOrderDetailByOrderId` 메서드를 통해 관련된 주문 상세 정보를 삭제합니다.
-- 이후 `OrderMapper`의 `deleteOrderByOrderId` 메서드를 통해 주문 정보를 삭제합니다.
-
-### 3. 주문 조회 및 상세 조회
-**기능 설명:** 특정 주문 ID에 해당하는 주문을 조회하거나, 주문 상세 ID에 해당하는 주문 상세 정보를 조회할 수 있는 기능을 제공합니다.
-
-**기술적 설명:**
-- **주문 조회:**
-  - `OrderServiceImpl`의 `selectOrder` 메서드는 주어진 `orderId`를 통해 주문 정보를 조회합니다.
-  - `OrderMapper`의 `selectOrderById` 메서드를 통해 주문 정보를 가져옵니다.
-  - `OrderDetailMapper`의 `selectOrderDetailsByOrderId` 메서드를 통해 관련된 주문 상세 정보를 가져와 주문 객체에 추가합니다.
-
-- **주문 상세 조회:**
-  - `OrderServiceImpl`의 `getOrderDetail` 메서드는 주어진 `orderDetailId`를 통해 주문 상세 정보를 조회합니다.
-  - `OrderDetailMapper`의 `getOrderDetailByOrderDetailId` 메서드를 통해 주문 상세 정보를 가져옵니다.
-
-### 4. 운송장 번호 추가
-**기능 설명:** 판매자가 주문 상세 ID와 운송장 번호를 입력하여 운송장 번호를 추가할 수 있는 기능을 제공합니다.
-
-**기술적 설명:**
-- `OrderServiceImpl`의 `updateTrackingNumber` 메서드는 판매자 인증 후, 운송장 번호를 업데이트합니다.
-- 먼저 `OrderDetailMapper`의 `checkSeller` 메서드를 통해 해당 상품의 판매자인지 확인합니다.
-- 판매자일 경우, `OrderDetailMapper`의 `updateTrackingNumber` 메서드를 통해 운송장 번호를 업데이트합니다.
-
-</div>
-</details>
-
-
-<p>
-
-<details>
-<summary>결제 기능</summary>
-<div markdown="1">
-
-### 1. 결제 상태 조회
-**기능 설명:** 포트원 결제 API를 호출하여 결제 상태를 조회합니다.
-
-**기술적 설명:**
-- `PaymentServiceImpl`의 `getPaymentStatus` 메서드는 포트원 결제 API를 호출하여 결제 상태를 조회합니다.
-- 결제 상태는 `PaymentResponse` 객체로 반환되며, 상태에 따라 주문 처리가 진행됩니다.
-
-### 2. 결제 검증 및 주문 상태 업데이트
-**기능 설명:** 결제 검증 후, 주문 상태를 업데이트합니다.
-
-**기술적 설명:**
-- `PaymentController`의 `completePayment` 메서드는 결제 검증 후, 주문 상태를 업데이트합니다.
-- 결제 금액이 주문 금액과 일치할 경우, 주문 상태를 "PAID"로 업데이트하고 장바구니를 삭제합니다.
-- 결제 금액이 불일치할 경우, 주문은 삭제됩니다.
-
-### 3. 결제 정보 저장
-**기능 설명:** 결제 정보를 데이터베이스에 저장합니다.
-
-**기술적 설명:**
-- 결제 정보는 `PaymentMapper`를 통해 데이터베이스에 저장됩니다.
-- `PaymentServiceImpl`의 `insertPayment` 메서드는 결제 정보를 저장합니다.
-
-</div>
-</details>
-
-<details>
-<summary>광고 기능</summary>
-<div markdown="1">
-
-### 1. 광고 생성
-**기능 설명:** 새로운 광고를 생성합니다.
-
-**기술적 설명:**
-- `AdvertisementServiceImpl`의 `insertAdvertisement` 메서드는 광고 정보를 처리하고, Google Cloud Storage에 이미지를 업로드합니다.
-
-### 2. 광고 삭제
-**기능 설명:** 특정 광고를 삭제합니다.
-
-**기술적 설명:**
-- `AdvertisementServiceImpl`의 `deleteAdvertisement` 메서드는 주어진 `advertisementId`를 통해 광고 정보를 삭제하고, 관련된 이미지를 삭제합니다.
-
-### 3. 광고 수정
-**기능 설명:** 기존 광고를 수정합니다.
-
-**기술적 설명:**
-- `AdvertisementServiceImpl`의 `updateAdvertisement` 메서드는 광고 정보를 수정하고, 이미지를 업데이트합니다.
-
-### 4. 광고 조회
-**기능 설명:** 모든 광고 또는 특정 광고를 조회합니다.
-
-**기술적 설명:**
-- `AdvertisementServiceImpl`의 `selectAllAdvertisements` 메서드는 모든 광고를 조회하고, `selectAdvertisementById` 메서드는 특정 광고를 조회합니다.
-
-</div>
-</details>
-
-<details>
-<summary>상품 기능</summary>
+<summary>상품 기능 자세히 보기</summary>
 <div markdown="1">
 
 ### 1. 상품 생성
@@ -216,6 +94,117 @@
 **기술적 설명:**
 - `ProductController`의 `selectProductByProductId` 메서드는 상품 ID를 받아 해당 상품을 조회합니다.
 - `ProductService`의 `selectProductByProductId` 메서드는 MyBatis를 통해 데이터베이스에서 해당 상품 ID에 맞는 상품 정보를 가져옵니다.
+
+</div>
+</details>
+
+## 주문 기능
+- **주문 생성/주문 삭제/주문 조회 및 상세 조회/운송장 번호 추가**
+<details>
+<summary>주문 기능 자세히 보기</summary>
+<div markdown="1">
+
+### 1. 주문 생성
+**기능 설명:** 사용자가 주문을 생성할 수 있는 기능을 제공합니다. 주문 정보는 `InsertOrderDTO`를 통해 전달되며, 주문 상세 정보는 `OrderDetailMapper`를 통해 저장됩니다.
+
+**기술적 설명:**
+- `OrderServiceImpl`의 `insertOrder` 메서드는 `InsertOrderDTO`를 받아 주문 정보를 처리합니다. 주문 상품의 가격을 조회하고 총 금액을 계산합니다.
+- `OrderMapper`의 `insertOrder` 메서드를 통해 주문 정보를 데이터베이스에 저장합니다.
+- `OrderDetailMapper`의 `insertOrderDetail` 메서드를 통해 주문 상세 정보를 저장합니다.
+
+### 2. 주문 삭제
+**기능 설명:** 특정 주문 ID에 해당하는 주문을 삭제할 수 있는 기능을 제공합니다.
+
+**기술적 설명:**
+- `OrderServiceImpl`의 `deleteOrder` 메서드는 주어진 `orderId`를 통해 주문 정보를 삭제합니다.
+- 먼저 `OrderDetailMapper`의 `deleteOrderDetailByOrderId` 메서드를 통해 관련된 주문 상세 정보를 삭제합니다.
+- 이후 `OrderMapper`의 `deleteOrderByOrderId` 메서드를 통해 주문 정보를 삭제합니다.
+
+### 3. 주문 조회 및 상세 조회
+**기능 설명:** 특정 주문 ID에 해당하는 주문을 조회하거나, 주문 상세 ID에 해당하는 주문 상세 정보를 조회할 수 있는 기능을 제공합니다.
+
+**기술적 설명:**
+- **주문 조회:**
+  - `OrderServiceImpl`의 `selectOrder` 메서드는 주어진 `orderId`를 통해 주문 정보를 조회합니다.
+  - `OrderMapper`의 `selectOrderById` 메서드를 통해 주문 정보를 가져옵니다.
+  - `OrderDetailMapper`의 `selectOrderDetailsByOrderId` 메서드를 통해 관련된 주문 상세 정보를 가져와 주문 객체에 추가합니다.
+
+- **주문 상세 조회:**
+  - `OrderServiceImpl`의 `getOrderDetail` 메서드는 주어진 `orderDetailId`를 통해 주문 상세 정보를 조회합니다.
+  - `OrderDetailMapper`의 `getOrderDetailByOrderDetailId` 메서드를 통해 주문 상세 정보를 가져옵니다.
+
+### 4. 운송장 번호 추가
+**기능 설명:** 판매자가 주문 상세 ID와 운송장 번호를 입력하여 운송장 번호를 추가할 수 있는 기능을 제공합니다.
+
+**기술적 설명:**
+- `OrderServiceImpl`의 `updateTrackingNumber` 메서드는 판매자 인증 후, 운송장 번호를 업데이트합니다.
+- 먼저 `OrderDetailMapper`의 `checkSeller` 메서드를 통해 해당 상품의 판매자인지 확인합니다.
+- 판매자일 경우, `OrderDetailMapper`의 `updateTrackingNumber` 메서드를 통해 운송장 번호를 업데이트합니다.
+
+</div>
+</details>
+
+
+## 결제 기능
+- **결제 상태 조회/결제 검증 및 주문 상태 업데이트/결제 정보 저장**
+<details>
+<summary>결제 기능 자세히 보기</summary>
+<div markdown="1">
+
+### 1. 결제 상태 조회
+**기능 설명:** 포트원 결제 API를 호출하여 결제 상태를 조회합니다.
+
+**기술적 설명:**
+- `PaymentServiceImpl`의 `getPaymentStatus` 메서드는 포트원 결제 API를 호출하여 결제 상태를 조회합니다.
+- 결제 상태는 `PaymentResponse` 객체로 반환되며, 상태에 따라 주문 처리가 진행됩니다.
+
+### 2. 결제 검증 및 주문 상태 업데이트
+**기능 설명:** 결제 검증 후, 주문 상태를 업데이트합니다.
+
+**기술적 설명:**
+- `PaymentController`의 `completePayment` 메서드는 결제 검증 후, 주문 상태를 업데이트합니다.
+- 결제 금액이 주문 금액과 일치할 경우, 주문 상태를 "PAID"로 업데이트하고 장바구니를 삭제합니다.
+- 결제 금액이 불일치할 경우, 주문은 삭제됩니다.
+
+### 3. 결제 정보 저장
+**기능 설명:** 결제 정보를 데이터베이스에 저장합니다.
+
+**기술적 설명:**
+- 결제 정보는 `PaymentMapper`를 통해 데이터베이스에 저장됩니다.
+- `PaymentServiceImpl`의 `insertPayment` 메서드는 결제 정보를 저장합니다.
+
+</div>
+</details>
+
+## 광고 기능
+- **광고 생성/광고 삭제/광고 수정/광고 조회**
+<details>
+<summary>광고 기능 자세히 보기</summary>
+<div markdown="1">
+
+### 1. 광고 생성
+**기능 설명:** 새로운 광고를 생성합니다.
+
+**기술적 설명:**
+- `AdvertisementServiceImpl`의 `insertAdvertisement` 메서드는 광고 정보를 처리하고, Google Cloud Storage에 이미지를 업로드합니다.
+
+### 2. 광고 삭제
+**기능 설명:** 특정 광고를 삭제합니다.
+
+**기술적 설명:**
+- `AdvertisementServiceImpl`의 `deleteAdvertisement` 메서드는 주어진 `advertisementId`를 통해 광고 정보를 삭제하고, 관련된 이미지를 삭제합니다.
+
+### 3. 광고 수정
+**기능 설명:** 기존 광고를 수정합니다.
+
+**기술적 설명:**
+- `AdvertisementServiceImpl`의 `updateAdvertisement` 메서드는 광고 정보를 수정하고, 이미지를 업데이트합니다.
+
+### 4. 광고 조회
+**기능 설명:** 모든 광고 또는 특정 광고를 조회합니다.
+
+**기술적 설명:**
+- `AdvertisementServiceImpl`의 `selectAllAdvertisements` 메서드는 모든 광고를 조회하고, `selectAdvertisementById` 메서드는 특정 광고를 조회합니다.
 
 </div>
 </details>
